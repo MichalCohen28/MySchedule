@@ -123,6 +123,7 @@ addActivityMiloButton.addEventListener('click', () => {
 });
 
 // Reset table for Michal
+// Reset table for Michal
 resetMichalTableButton.addEventListener('click', () => {
   const table = document.querySelector('.michal-schedule');
   for (let i = 1; i < table.rows.length; i++) {
@@ -184,21 +185,21 @@ resetMiloTableButton.addEventListener('click', () => {
   localStorage.removeItem('miloData');
 });
 
-// Load data from Firestore on page load
-window.addEventListener('load', async () => {
-  const michalData = await getTableData('michalData');
+// Load data from localStorage on page load
+window.addEventListener('load', () => {
+  const michalData = getTableData('michalData');
   michalData.forEach(({ day, startTime, endTime, activity }) => {
-      addActivityToTable('michal-schedule', day, startTime, endTime, activity);
+    addActivityToTable('michal-schedule', day, startTime, endTime, activity);
   });
 
-  const tamarData = await getTableData('tamarData');
+  const tamarData = getTableData('tamarData');
   tamarData.forEach(({ day, startTime, endTime, activity }) => {
-      addActivityToTable('tamar-schedule', day, startTime, endTime, activity);
+    addActivityToTable('tamar-schedule', day, startTime, endTime, activity);
   });
 
-  const miloData = await getTableData('miloData');
+  const miloData = getTableData('miloData');
   miloData.forEach(({ day, time, person }) => {
-      const table = document.querySelector('.milo-schedule');
-      table.rows[parseInt(time) + 1].cells[parseInt(day) + 1].textContent = person;
+    const table = document.querySelector('.milo-schedule');
+    table.rows[parseInt(time) + 1].cells[parseInt(day) + 1].textContent = person;
   });
 });
