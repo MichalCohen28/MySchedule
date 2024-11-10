@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "./firebase";
 import  ScheduleTable from "./components/ScheduleTable";
 
-import { addDoc, getDocs, collection } from "firebase/firestore";
+import { deleteDoc ,addDoc, getDocs, collection } from "firebase/firestore";
 
 import "./style.css";
 import Login from "./components/Login";
@@ -104,19 +104,32 @@ function ScheduleManager() {
     ]);
   };
 
-  // פונקציות לאיפוס לוחות הזמנים
-  const resetMichalSchedule = () => {
-    // saveToFirebase(MICHAL_COLLECTION, []);
-    setMichalSchedule([]);
-  };
-  const resetTamarSchedule = () => {
-    // saveToFirebase(TAMAR_COLLECTION, []);
-    setTamarSchedule([]);
-  };
-  const resetMiloSchedule = () => {
-    // saveToFirebase(MILO_COLLECTION, []);
-    setMiloSchedule([]);
-  };
+
+// מחיקת כל המסמכים מתוך אוסף
+const resetCollection = async (collectionName) => {
+  const collectionRef = collection(db, collectionName);
+  const data = await getDocs(collectionRef);
+  data.docs.forEach(async (doc) => {
+    await deleteDoc(doc.ref);
+  });
+};
+
+// פונקציות לאיפוס לוחות הזמנים
+const resetMichalSchedule = async () => {
+  await resetCollection(MICHAL_COLLECTION);
+  setMichalSchedule([]);
+};
+
+const resetTamarSchedule = async () => {
+  await resetCollection(TAMAR_COLLECTION);
+  setTamarSchedule([]);
+};
+
+const resetMiloSchedule = async () => {
+  await resetCollection(MILO_COLLECTION);
+  setMiloSchedule([]);
+};
+
 
   if (!true)
     return (
