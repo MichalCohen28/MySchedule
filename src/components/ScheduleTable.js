@@ -52,7 +52,7 @@ function ScheduleTable({
           return "lightcoral";
       }
     };
-  
+    
     return (
       <div className="table-container">
         <h2>{title}</h2>

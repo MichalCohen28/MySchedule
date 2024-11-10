@@ -66,8 +66,9 @@ function ScheduleManager() {
       const tamarCollectionRef = collection(db, TAMAR_COLLECTION);
       const miloCollectionRef = collection(db, MILO_COLLECTION);
       const data = await getDocs(micahlCollectionRef);
+      
       setMichalSchedule(
-        data.docs.map((elem) => ({ ...elem.data(), id: elem.id }))
+        data.docs.map((elem) => ({ ...elem.data() }))
       );
       const data2 = await getDocs(tamarCollectionRef);
       setTamarSchedule(
@@ -81,21 +82,26 @@ function ScheduleManager() {
     fetchData();
   }, []);
 
-  const saveToFirebase = (col, data) => addDoc(collection(db, col), data[0]);
+  const saveToFirebase = (col, data) => addDoc(collection(db, col), data);
 
   // פונקציות להוספת פעילות חדשה
-  const addActivity = (scheduleSetter, day, startTime, endTime, activity) => {
+  const addActivity = (scheduleSetter, day, startTime, endTime, activity, colName) => {
+    const newItem={ day, startTime, endTime, activity }
+    saveToFirebase(colName, newItem)
     scheduleSetter((prevSchedule) => [
       ...prevSchedule,
-      { day, startTime, endTime, activity },
+      { ...newItem },
     ]);
   };
 
   const addMiloActivity = (day, time, activity) => {
-    const newData = [...miloSchedule, { day, time, activity }];
-    saveToFirebase(MILO_COLLECTION, newData);
+    const newItem={ day, time, activity }
 
-    setMiloSchedule(newData);
+    saveToFirebase(MILO_COLLECTION, newItem);
+    setMiloSchedule((prevSchedule) => [
+      ...prevSchedule,
+      { ...newItem },
+    ]);
   };
 
   // פונקציות לאיפוס לוחות הזמנים
@@ -137,17 +143,13 @@ function ScheduleManager() {
               days={days}
               times={times}
               addActivity={(day, startTime, endTime, activity) => {
-                const newData = [
-                  ...michalSchedule,
-                  { day, startTime, endTime, activity },
-                ];
-                saveToFirebase(MICHAL_COLLECTION, newData);
                 addActivity(
                   setMichalSchedule,
                   day,
                   startTime,
                   endTime,
-                  activity
+                  activity,
+                  MICHAL_COLLECTION
                 );
               }}
               resetSchedule={resetMichalSchedule}
@@ -160,17 +162,13 @@ function ScheduleManager() {
               days={days}
               times={times}
               addActivity={(day, startTime, endTime, activity) => {
-                const newData = [
-                  ...tamarSchedule,
-                  { day, startTime, endTime, activity },
-                ];
-                saveToFirebase(TAMAR_COLLECTION, newData);
                 addActivity(
                   setTamarSchedule,
                   day,
                   startTime,
                   endTime,
-                  activity
+                  activity,
+                  TAMAR_COLLECTION
                 );
               }}
               resetSchedule={resetTamarSchedule}
